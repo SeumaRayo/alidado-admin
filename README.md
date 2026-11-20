@@ -15,3 +15,12 @@ mismo origen. Puedes ajustar los puertos con `PANEL_ADMIN_PORT` y
 
 El dashboard muestra registros del backend. Moderación y formalización reciben
 identificadores para las operaciones que la API expone por ID.
+
+## Vercel
+
+Importa el repositorio del panel en Vercel. El archivo `vercel.json` define
+`dist` como salida estática y enruta las llamadas a la función que reenvía la API.
+
+Configura `ALIADO_API_ORIGIN` con el origen HTTPS público del backend Spring Boot,
+sin `/api/v1`. El backend y PostgreSQL deben estar accesibles desde su entorno
+de despliegue. La base local de Docker conserva los datos de prueba locales.
