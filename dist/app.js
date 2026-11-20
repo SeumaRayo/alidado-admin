@@ -308,16 +308,29 @@ async function review(id) {
   }
 }
 
-function search() {
-  const results = el('div', {}, el('p', { class: 'empty' }, 'Ingresa un término de búsqueda.'));
-  return card(form([field('Buscar por correo o descripción', 'q', { type: 'search' })], 'Buscar', async ({ q }) => {
-    if (!q.trim()) throw new Error('Ingresa un término de búsqueda.');
-    const data = await api('/admin/busqueda?q=' + encodeURIComponent(q.trim()));
-    results.replaceChildren(el('h2', {}, 'Usuarios'), table(['Correo', 'Rol', 'ID', 'Acciones'],
-      data.usuarios.map((user) => [user.email, badge(user.rol), user.id, button('Bloquear', () => block(user.id))])),
-    el('h2', {}, 'Solicitudes'), table(['Descripción', 'Estado', 'ID'],
-      data.solicitudes.map((item) => [item.descripcion, badge(item.estado), item.id])));
-  }, true), results);
+async function search() {
+  const demoQuery = 'demo-panel';
+  const results = el('div');
+
+  async function loadResults(query) {
+    const term = query.trim();
+    if (!term) throw new Error('Ingresa un término de búsqueda.');
+    const data = await api('/admin/busqueda?q=' + encodeURIComponent(term));
+    results.replaceChildren(
+      el('h2', {}, 'Usuarios'), table(['Correo', 'Rol', 'ID', 'Acciones'],
+        data.usuarios.map((user) => [user.email, badge(user.rol), user.id, button('Bloquear', () => block(user.id))]),
+        'No se encontraron usuarios para «' + term + '».'),
+      el('h2', {}, 'Solicitudes'), table(['Descripción', 'Estado', 'ID'],
+        data.solicitudes.map((item) => [item.descripcion, badge(item.estado), item.id]),
+        'No se encontraron solicitudes para «' + term + '».'));
+  }
+
+  const searchForm = form([
+    field('Buscar por correo o descripción', 'q', { type: 'search', value: demoQuery }),
+  ], 'Buscar', ({ q }) => loadResults(q), true);
+
+  await loadResults(demoQuery);
+  return card(searchForm, results);
 }
 
 function idField(label, name, value) {
