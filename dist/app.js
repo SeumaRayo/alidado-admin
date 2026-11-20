@@ -309,27 +309,32 @@ async function review(id) {
 }
 
 async function search() {
-  const demoQuery = 'demo-panel';
+  const allUsersQuery = '@';
   const results = el('div');
 
   async function loadResults(query) {
     const term = query.trim();
-    if (!term) throw new Error('Ingresa un término de búsqueda.');
-    const data = await api('/admin/busqueda?q=' + encodeURIComponent(term));
+    const listUsers = !term;
+    const data = await api('/admin/busqueda?q=' + encodeURIComponent(listUsers ? allUsersQuery : term));
     results.replaceChildren(
       el('h2', {}, 'Usuarios'), table(['Correo', 'Rol', 'ID', 'Acciones'],
         data.usuarios.map((user) => [user.email, badge(user.rol), user.id, button('Bloquear', () => block(user.id))]),
-        'No se encontraron usuarios para «' + term + '».'),
-      el('h2', {}, 'Solicitudes'), table(['Descripción', 'Estado', 'ID'],
+        listUsers ? 'No hay usuarios para mostrar.' : 'No se encontraron usuarios para «' + term + '».'),
+      listUsers ? el('p', { class: 'empty' }, 'Para encontrar solicitudes, busca por descripción o ID.') : null,
+      ...(!listUsers ? [el('h2', {}, 'Solicitudes'), table(['Descripción', 'Estado', 'ID'],
         data.solicitudes.map((item) => [item.descripcion, badge(item.estado), item.id]),
-        'No se encontraron solicitudes para «' + term + '».'));
+        'No se encontraron solicitudes para «' + term + '».')] : []));
   }
 
   const searchForm = form([
-    field('Buscar por correo o descripción', 'q', { type: 'search', value: demoQuery }),
+    field('Buscar por correo, descripción o ID', 'q', { type: 'search', optional: true }),
+    button('Ver todos los usuarios', () => {
+      searchForm.reset();
+      searchForm.requestSubmit();
+    }),
   ], 'Buscar', ({ q }) => loadResults(q), true);
 
-  await loadResults(demoQuery);
+  await loadResults('');
   return card(searchForm, results);
 }
 
