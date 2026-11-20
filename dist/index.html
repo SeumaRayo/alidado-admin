@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ALIADO | Panel administrativo</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main id="login" class="login">
+    <div class="login-brand"><span class="brand-mark">A</span><strong>ALIADO</strong></div>
+    <form id="login-form" class="card login-card">
+      <h1>Panel administrativo</h1>
+      <p>Ingresa con tu cuenta de administrador.</p>
+      <label>Correo electrónico<input name="email" type="email" autocomplete="username" required></label>
+      <label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="primary">Ingresar</button>
+      <p id="login-error" role="alert" hidden></p>
+    </form>
+  </main>
+  <div id="panel" class="shell" hidden>
+    <aside>
+      <div class="brand"><span class="brand-mark">A</span><div><strong>ALIADO</strong><small>Panel administrativo</small></div></div>
+      <nav aria-label="Secciones del panel"></nav>
+      <button class="logout" id="logout">Cerrar sesión</button>
+    </aside>
+    <main class="workspace">
+      <header><span>Administración / <strong id="breadcrumb"></strong></span><span id="account"></span></header>
+      <section class="page">
+        <h1 id="title" tabindex="-1"></h1><p id="description"></p>
+        <div id="notice" role="status" hidden></div>
+        <div id="content"></div>
+      </section>
+    </main>
+  </div>
+  <dialog id="dialog">
+    <div class="section-head"><h2 id="dialog-title"></h2><button id="close-dialog" type="button" aria-label="Cerrar ventana">Cerrar</button></div>
+    <div id="dialog-body"></div>
+  </dialog>
+</body>
+</html>
